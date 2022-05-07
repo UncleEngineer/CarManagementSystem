@@ -1,5 +1,7 @@
 import socket
 import csv
+import uuid
+
 def writetocsv(data):
 	# data = ['toyota','red','1A11','1001','2022-05-07 15:29:15']
 	with open('2-car-system-in.csv','a',newline='',encoding='utf-8') as file:
@@ -10,6 +12,8 @@ def writetocsv(data):
 serverip = '192.168.0.100'
 port = 9000
 buffsize = 4096
+
+car_dict = {}
 
 while True:
 	server = socket.socket()
@@ -23,12 +27,34 @@ while True:
 
 	data = client.recv(buffsize).decode('utf-8')
 	print('Data from client: ',data)
-	writetocsv(data.split('|'))
-	# - บันทึกข้อมูลที่ได้รับจาก [2]
-	# write to csv
 
-	client.send('saved'.encode('utf-8'))
-	client.close()
+	source = data.split('|')[0] # มาจากโปรแกรมฝั่งไหน? in / location / check
+
+	if source == 'in':
+		key = str(uuid.uuid1()).split('-')[0]
+		car_dict[key] = data.split('|')
+		# - บันทึกข้อมูลที่ได้รับจาก [2]
+		# write to csv
+		writetocsv(data.split('|'))
+		client.send('saved'.encode('utf-8'))
+		client.close()
+	elif source == 'location':
+		text = 'out|'
+		for k,v in car_dict.items():
+			text += k + '|'
+			for dt in v:
+				text += dt + '|'
+
+		print('Send to Location: ', text)
+		client.send(text.encode('utf-8'))
+		client.close()
+	else:
+		pass
+
+
+	
+
+	
 
 
 
