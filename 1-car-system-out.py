@@ -23,7 +23,7 @@ while True:
 
 	data = client.recv(buffsize).decode('utf-8')
 	print('Data from client: ',data)
-	writetocsv(text.split('|'))
+	writetocsv(data.split('|'))
 	# - บันทึกข้อมูลที่ได้รับจาก [2]
 	# write to csv
 
