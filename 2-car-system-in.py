@@ -9,8 +9,7 @@ def writetocsv(data):
 		fw.writerow(data) # no s is single line append
 	print('csv saved')
 ############ADRESS##############
-serverip = '192.168.0.100'
-
+serverip = '192.168.0.100' # IP of 1-car-system-out.py
 port = 9000
 buffsize = 4096
 
