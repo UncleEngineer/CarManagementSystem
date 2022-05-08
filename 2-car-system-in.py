@@ -47,6 +47,7 @@ while True:
 	data_server = server.recv(buffsize).decode('utf-8')
 	print('Data from server: ', data_server)
 	server.close()
+	print('--------------')
 
 
 

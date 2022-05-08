@@ -26,6 +26,8 @@ while True:
 	server.send(text.encode('utf-8'))
 	data_server = server.recv(buffsize).decode('utf-8')
 	print('Data from server: ', data_server)
+	data_list = data_server.split('|')
+	print('Your car zone: ',data_list[-2])
 	server.close()
 	print('--------------')
 

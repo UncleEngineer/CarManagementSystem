@@ -6,7 +6,7 @@ plate_dict = {}
 # plate_dict = {'1กก99':['312341234',31234234,'13241234']}
 
 import threading
-serverip_location = '192.168.0.100'
+serverip_location = '192.168.0.100' # IP of 3-car-system-location.py
 port_location = 9500
 buffsize_location = 4096
 
@@ -67,33 +67,45 @@ def splitrow(datalist, columns=7):
     return result
 
 ############ADRESS##############
-serverip = '192.168.0.100'
+serverip = '192.168.0.100' # IP of 1-car-system-out.py
 port = 9000
 buffsize = 4096
 
 while True:
-	q = input('[1] - get multiple car information\n[2] - get single car information\n[q] - exit\n>>> ')
+	q = input('[1] - get multiple car information\n[2] - get single car information\n[3] - Save Car Zone\n[q] - exit\n>>> ')
 	if q == '1':
 		text = 'location|allcar'
 	elif q == '2':
 		getcar = 'Enter Plate Code: '
 		text = 'location|{}'.format(getcar)
+	elif q == '3':
+		plate = input('Enter Plate Code: ')
+		getzone = input('Enter Zone Number: ')
+		if len(plate_dict[plate]) == 7:
+			# ยังไม่เคยกรอก ข้อมูลจะมีทั้ง 7 รายการ
+			plate_dict[plate].append(getzone)
+		else:
+			# ถ้าเคยกรอกไปแล้ว ต้องการเปลี่ยนให้ใช้แบบนี้
+			plate_dict[plate][7] = getzone
+
 	elif q == 'q':
 		break
 	
-	# Connect and Send
-	server = socket.socket()
-	server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
-	server.connect((serverip,port))
-	server.send(text.encode('utf-8'))
-	data_server = server.recv(buffsize).decode('utf-8')
-	print('Data from server: ', data_server)
-	datalist = data_server.split('|')[1:-1] # [1:-1] remove prefix and subfix
-	for row in splitrow(datalist,7):
-		print(row)
-		# ['f583f7b5', 'in', 'toyota', 'red', '1A111', '1002', '2022-05-08 11:40:02']
-		plate_dict[row[4]] = row # บันทึกข้อมูลของรถเก็บไว้เป็น dict
-	server.close()
+	if q != '3':
+		# Connect and Send
+		server = socket.socket()
+		server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
+		server.connect((serverip,port))
+		server.send(text.encode('utf-8'))
+		data_server = server.recv(buffsize).decode('utf-8')
+		print('Data from server: ', data_server)
+		datalist = data_server.split('|')[1:-1] # [1:-1] remove prefix and subfix
+		for row in splitrow(datalist,7):
+			print(row)
+			# ['f583f7b5', 'in', 'toyota', 'red', '1A111', '1002', '2022-05-08 11:40:02']
+			if row[4] not in plate_dict:
+				plate_dict[row[4]] = row # บันทึกข้อมูลของรถเก็บไว้เป็น dict
+		server.close()
 
 
 
