@@ -7,7 +7,7 @@ plate_dict = {}
 
 import threading
 serverip_location = '192.168.0.100'
-port_location = 9000
+port_location = 9500
 buffsize_location = 4096
 
 def LocationServer():
